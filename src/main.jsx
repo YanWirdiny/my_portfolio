@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import './index.css'
 import App from './App.tsx'
 import BuddyPage from './pages/BuddyPage.tsx'
+import CalendarSync from './pages/CalendarSync.tsx'
 
 // BrowserRouter — wraps the entire app to enable URL-based routing
 // Routes      — container for all your Route definitions
@@ -17,6 +18,7 @@ createRoot(document.getElementById('root')).render(
       <Routes>
         <Route path="/" element={<App />} />
         <Route path="/buddy" element={<BuddyPage />} />
+        <Route path="/CalendarSync" element={<CalendarSync />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>,
