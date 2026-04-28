@@ -1,19 +1,28 @@
-// Import necessary libraries and icons
 import React, { useState, useEffect } from 'react';
-import { Github, Linkedin, Mail, ArrowRight, Code, Palette, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-// Color palette: #cdc392 (gold), #e8e5da (cream), #9eb7e5 (light blue), #648de5 (blue), #304c89 (navy)
+function TerminalCard({ filename, children }: { filename: string; children: React.ReactNode }) {
+  return (
+    <div className="terminal-card">
+      <div className="terminal-bar">
+        <div className="lights">
+          <span className="l-r" />
+          <span className="l-y" />
+          <span className="l-g" />
+        </div>
+        <div className="terminal-title">{filename}</div>
+      </div>
+      <div className="terminal-body">{children}</div>
+    </div>
+  );
+}
 
 export default function Portfolio() {
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [scrollY, setScrollY] = useState(0);
-  const [activeSection, setActiveSection] = useState('hero');
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [typedText, setTypedText] = useState('');
 
-  // Types out "Engineer" letter by letter on page load
   useEffect(() => {
-    const word = 'Engineer';
+    const word = 'ENGINEER';
     let i = 0;
     const timer = setInterval(() => {
       setTypedText(word.slice(0, i + 1));
@@ -23,41 +32,11 @@ export default function Portfolio() {
     return () => clearInterval(timer);
   }, []);
 
-  // Track mouse position
-  useEffect(() => {
-    const handleMouse = (e: MouseEvent) => setMousePos({ x: e.clientX, y: e.clientY });
-    window.addEventListener('mousemove', handleMouse);
-    return () => window.removeEventListener('mousemove', handleMouse);
-  }, []);
-
-  // Track scroll
-  useEffect(() => {
-    let ticking = false;
-    const handleScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          setScrollY(window.scrollY);
-          ticking = false;
-        });
-        ticking = true;
-      }
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  // Intersection Observer — watches all .scroll-anim elements
-  // Each section assigns a different animation class (anim-up, anim-left, anim-right, anim-zoom, anim-up-fast)
-  // When the element enters the viewport, 'is-visible' is added to trigger the CSS animation
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('is-visible');
-          } else {
-            entry.target.classList.remove('is-visible');
-          }
+          if (entry.isIntersecting) entry.target.classList.add('is-visible');
         });
       },
       { threshold: 0.1 }
@@ -68,314 +47,708 @@ export default function Portfolio() {
 
   const projects = [
     {
-      title: "BUDDY",
-      desc: "The unique mobile helping people with eyes impairment to navigate the world",
-      tech: ["React Native", "TypeScript", "Node.js"],
-      accent: "#304c89",
-      link: "/buddy"
+      id: 'PRJ-001',
+      title: 'BUDDY',
+      desc: 'The unique mobile app helping people with visual impairment to navigate the world.',
+      tech: ['React Native', 'TypeScript', 'Node.js'],
+      filename: '~/projects/buddy.app',
+      link: '/buddy',
+      internal: true,
     },
     {
-      title: "123Therapy",
-      desc: "An AI platform for the first step of mental health care",
-      tech: ["Python", "Flask", "Tailwind"],
-      accent: "#304c89",
-      link: "https://web-production-3fca1.up.railway.app/"
+      id: 'PRJ-002',
+      title: '123THERAPY',
+      desc: 'An AI platform for the first step of mental health care.',
+      tech: ['Python', 'Flask', 'Tailwind'],
+      filename: '~/projects/123therapy.app',
+      link: 'https://web-production-3fca1.up.railway.app/',
+      internal: false,
     },
     {
-      title: "CalendarSync Extension",
-      desc: "Plan your time effectively by syncing your Google Calendar with Canvas Student",
-      tech: ["JavaScript", "HTML", "CSS"],
-      accent: "#304c89",
-      link: "/CalendarSync"
+      id: 'PRJ-003',
+      title: 'CALENDARSYNC',
+      desc: 'Plan your time effectively by syncing your Google Calendar with Canvas Student.',
+      tech: ['JavaScript', 'HTML', 'CSS'],
+      filename: '~/projects/calendarsync.app',
+      link: '/CalendarSync',
+      internal: true,
     },
-   
   ];
 
   const skills = [
-    { icon: Code,    name: "Development", items: ["React", "Node.js", "Python", "TypeScript"], accent: "#648de5" },
-    { icon: Palette, name: "Design",      items: ["Figma", "UI/UX", "Prototyping", "Branding"], accent: "#648de5" },
-    { icon: Zap,     name: "Tools",       items: ["Git", "Docker", "AWS", "CI/CD"], accent: "#648de5" }
+    { name: 'DEVELOPMENT', filename: 'development.sh', items: ['React', 'Node.js', 'Python', 'TypeScript'] },
+    { name: 'DESIGN',      filename: 'design.sh',      items: ['Figma', 'UI/UX', 'Prototyping', 'Branding'] },
+    { name: 'TOOLS',       filename: 'infra.sh',        items: ['Git', 'Docker', 'AWS', 'CI/CD'] },
   ];
 
   return (
-    <div className="c-bg min-h-screen overflow-x-hidden">
+    <div data-theme={theme} className="portfolio-root">
 
-      {/* Custom cursor */}
-      <div
-        className="fixed w-4 h-4 rounded-full pointer-events-none z-50 c-cursor transition-transform duration-150"
-        style={{
-          left: mousePos.x - 8,
-          top: mousePos.y - 8,
-          transform: activeSection === 'hero' ? 'scale(1.5)' : 'scale(1)'
-        }}
-      />
-
-      {/* Navigation */}
-      <nav className="c-nav fixed top-0 w-full z-40 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="text-2xl font-bold" style={{ color: 'var(--cream)' }}>Yan Wirdiny Moise</div>
-          <div className="hidden md:flex gap-8 text-sm">
-            <a href="#work"    className="c-nav-link">Work</a>
-            <a href="#about"   className="c-nav-link">About</a>
-            <a href="#contact" className="c-nav-link">Contact</a>
+      {/* Nav */}
+      <nav className="p-nav">
+        <div className="nav-inner">
+          <div className="nav-logo">
+            <span className="nav-prompt">&gt;&nbsp;</span>
+            <span className="nav-name">yan_wirdiny_moise</span>
           </div>
+          <div className="nav-links">
+            <a href="#work"    className="nav-link">[work]</a>
+            <a href="#about"   className="nav-link">[about]</a>
+            <a href="#contact" className="nav-link">[contact]</a>
+          </div>
+          <button
+            className="theme-toggle"
+            onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')}
+            aria-label="Toggle theme"
+          >
+            {theme === 'dark' ? '[light]' : '[dark]'}
+          </button>
         </div>
       </nav>
 
-      {/* ── Hero Section ── animation: slide up (anim-up) */}
-      <section className="min-h-screen flex items-center justify-center relative overflow-hidden">
-        <div className="relative z-10 text-center px-6 scroll-anim anim-up is-visible w-full flex flex-col items-center justify-center">
-          <div className="mb-4">
-            <div className="inline-block px-4 py-2 c-badge rounded-full">
-              <span className="text-sm">Available for work</span>
+      {/* Hero */}
+      <section className="hero-section">
+        <div className="grid-overlay" />
+        <div className="hero-inner scroll-anim anim-up is-visible">
+          <div className="hero-badge">
+            <span className="dot-live" />
+            <span className="badge-text">available_for_work</span>
+          </div>
+          <div className="hero-eyebrow">
+            <span className="eyebrow-rule" />
+            <span className="eyebrow-text">software engineer // umass boston</span>
+          </div>
+          <h1 className="hero-headline">
+            I AM YAN W. MOISE<br />YOUR SOFTWARE<br />
+            <span className="typed-line">
+              {typedText}<span className="typed-cursor">|</span>
+            </span>
+          </h1>
+          <div className="manifesto-wrap">
+            <TerminalCard filename="~/yan/manifesto.txt">
+              <p className="manifesto-text">
+                <span className="cr-text">$&nbsp;</span>
+                a single line of code can change everything.
+              </p>
+            </TerminalCard>
+          </div>
+          <div className="version-tag">v2.6 // 2026</div>
+        </div>
+      </section>
+
+      {/* Work */}
+      <section id="work" className="work-section">
+        <div className="section-inner">
+          <div className="section-label scroll-anim anim-up">
+            <span className="label-text">&gt;&gt; selected_work</span>
+            <span className="label-rule" />
+          </div>
+          <div className="projects-list">
+            {projects.map((project, i) => {
+              const card = (
+                <div className="proj-card scroll-anim anim-up" style={{ transitionDelay: `${i * 120}ms` }}>
+                  <TerminalCard filename={project.filename}>
+                    <div className="proj-meta">
+                      <span className="proj-id">{project.id}</span>
+                      <span className="proj-status">
+                        <span className="dot-live dot-sm" />
+                        deployed
+                      </span>
+                    </div>
+                    <h3 className="proj-title">{project.title}</h3>
+                    <p className="proj-desc">{project.desc}</p>
+                    <div className="proj-footer">
+                      <div className="proj-tags">
+                        {project.tech.map((t, j) => (
+                          <span key={j} className="proj-tag">{t}</span>
+                        ))}
+                      </div>
+                      <span className="proj-view">view_case &#8594;</span>
+                    </div>
+                  </TerminalCard>
+                </div>
+              );
+
+              return project.internal ? (
+                <Link key={i} to={project.link} className="proj-anchor">{card}</Link>
+              ) : (
+                <a key={i} href={project.link} target="_blank" rel="noopener noreferrer" className="proj-anchor">{card}</a>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Skills */}
+      <section className="skills-section">
+        <div className="section-inner">
+          <div className="section-label scroll-anim anim-up">
+            <span className="label-text">&gt;&gt; what_i_do</span>
+            <span className="label-rule" />
+          </div>
+          <div className="skills-grid">
+            {skills.map((skill, i) => (
+              <div key={i} className="scroll-anim anim-up" style={{ transitionDelay: `${i * 150}ms` }}>
+                <TerminalCard filename={skill.filename}>
+                  <p className="skill-prompt">$ ./run --stack</p>
+                  <h3 className="skill-title">{skill.name}</h3>
+                  <ul className="skill-list">
+                    {skill.items.map((item, j) => (
+                      <li key={j} className="skill-item">
+                        <span className="cr-text">&#8594;</span>
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </TerminalCard>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* About */}
+      <section id="about" className="about-section">
+        <div className="grid-overlay" />
+        <div className="section-inner">
+          <div className="section-label scroll-anim anim-up">
+            <span className="label-text">&gt;&gt; about_me</span>
+            <span className="label-rule" />
+          </div>
+          <div className="about-stack scroll-anim anim-up">
+            <TerminalCard filename="~/about/yan.md">
+              <p className="about-prompt">$ cat about.md // origin_story</p>
+              <p className="about-text">
+                As a proud Haitian rooted in resilience, creativity, and strength, I carry my heritage into every line of code I write.
+                My passion for technology goes beyond curiosity — it is a calling to build, to innovate, and to create solutions that make a real difference.
+                I code with purpose: if my work can make even one person&apos;s life easier, clearer, or more empowered, then I have succeeded.
+              </p>
+            </TerminalCard>
+            <div className="stats-block">
+              <div className="stat-cell">
+                <span className="stat-number">3+</span>
+                <span className="stat-label">Hackathons Won</span>
+              </div>
+              <div className="stat-divider" />
+              <div className="stat-cell">
+                <span className="stat-number">10+</span>
+                <span className="stat-label">Projects Shipped</span>
+              </div>
+              <div className="stat-divider" />
+              <div className="stat-cell">
+                <span className="stat-number">3.7</span>
+                <span className="stat-label">GPA @ UMB</span>
+              </div>
             </div>
           </div>
-          <h1 className="text-7xl md:text-9xl font-bold tracking-tight text-center mb-6" style={{ color: '#304c89' }}>
-           Your Software
-            <br />
-            <span>{typedText}<span className="typed-cursor">|</span></span>
-          </h1>
-          <p className="text-xl md:text-2xl c-muted mb-12 max-w-2xl text-center">
-           A single line of code can change everything. 
-          </p>
         </div>
+      </section>
 
-        {/* Scroll indicator */}
-        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 animate-bounce">
-          <div className="w-6 h-10 rounded-full p-1 c-scroll-indicator">
-            <div className="w-1 h-2 rounded-full mx-auto c-scroll-dot" />
+      {/* Contact */}
+      <section id="contact" className="contact-section">
+        <div className="section-inner">
+          <div className="section-label scroll-anim anim-up">
+            <span className="label-text">&gt;&gt; init_contact</span>
+            <span className="label-rule" />
           </div>
-        </div>
-      </section>
-
-      {/* ── Projects Section ── animation: slide from left (anim-left) */}
-      <section id="work" className="py-32 px-6 relative">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-5xl md:text-7xl font-bold mb-6 scroll-anim anim-left c-gold">Selected Work</h2>
-          <p className="text-xl c-muted mb-16 scroll-anim anim-left">Projects that showcase my passion</p>
-
-          <div className="space-y-8">
-            {projects.map((project, i) => {
-              const cardContent = (
-                <div
-                  className="c-card relative overflow-hidden rounded-3xl transition-all duration-500 hover:scale-[1.02]"
-                  style={{ borderLeft: `4px solid ${project.accent}` }}
-                >
-                  <div className="p-8 md:p-12">
-                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-                      <div className="flex-1">
-                        <h3 className="text-3xl md:text-4xl font-bold mb-3" style={{ color: project.accent }}>
-                          {project.title}
-                        </h3>
-                        <p className="c-muted text-lg mb-4">{project.desc}</p>
-                        <div className="flex flex-wrap gap-2">
-                          {project.tech.map((tech, j) => (
-                            <span key={j} className="px-3 py-1 text-sm c-tag rounded-full">
-                              {tech}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                      <div
-                        className="w-12 h-12 rounded-full flex items-center justify-center transition-all group-hover:rotate-45"
-                        style={{ backgroundColor: project.accent }}
-                      >
-                        <ArrowRight className="w-6 h-6 c-icon-dark" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              );
-
-              return project.link?.startsWith('/') ? (
-                <Link
-                  key={i}
-                  to={project.link}
-                  className="group scroll-anim anim-left block"
-                  style={{ transitionDelay: `${i * 100}ms` }}
-                >
-                  {cardContent}
-                </Link>
-              ) : (
-                <a
-                  key={i}
-                  href={project.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group scroll-anim anim-left block"
-                  style={{ transitionDelay: `${i * 100}ms` }}
-                >
-                  {cardContent}
-                </a>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Skills Section ── animation: slide from right (anim-right) */}
-      <section className="py-32 px-6 c-section-alt">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-5xl md:text-7xl font-bold mb-20 text-center scroll-anim anim-right">What I Do</h2>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {skills.map((skill, i) => {
-              const Icon = skill.icon;
-              return (
-                <div
-                  key={i}
-                  className="scroll-anim anim-right group cursor-pointer"
-                  style={{ transitionDelay: `${i * 150}ms` }}
-                >
-                  <div className="p-8 rounded-3xl c-card transition-all duration-500 hover:scale-105">
-                    <div
-                      className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform"
-                      style={{ backgroundColor: skill.accent }}
-                    >
-                      <Icon className="w-7 h-7 c-icon-dark" />
-                    </div>
-                    <h3 className="text-2xl font-bold mb-4">{skill.name}</h3>
-                    <ul className="space-y-2">
-                      {skill.items.map((item, j) => (
-                        <li key={j} className="c-muted flex items-center gap-2">
-                          <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: skill.accent }} />
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* ── About Section ── animation: zoom in (anim-zoom) */}
-      <section id="about" className="py-32 px-6 relative">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-5xl md:text-7xl font-bold mb-8 scroll-anim anim-zoom c-gold">About Me</h2>
-          <p className="text-xl  md:text-2xl leading-relaxed scroll-anim anim-zoom mb-8" style={{color: '#9eb7e5'}}>
-            As a proud Haitian rooted in resilience, creativity, and strength, I carry my heritage into every line of code I write. 
-            My passion for technology goes beyond curiosity, it is a calling to build, to innovate, and to create solutions that make a real 
-            difference. I code with purpose: if my work can make even one person’s life easier, clearer, or more empowered, then I have succeeded. Technology is not just a skill for me; it is my language of expression. Through my code, I tell the story of who I am, where I come from, and the future I dream of shaping. I strive to turn ideas into impact, challenges into opportunities, and ambition into meaningful change.
-          </p>
-      
-        </div>
-      </section>
-
-      {/* ── Contact Section ── animation: slide up fast (anim-up-fast) */}
-      <section id="contact" className="py-32 px-6 c-section-alt">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-5xl md:text-7xl font-bold mb-8 scroll-anim anim-up-fast">Let's Connect</h2>
-          <p className="text-xl  mb-12 scroll-anim anim-up-fast">
-            Have a project in mind? Let's make something amazing together.
-          </p>
-
-          <div className="flex flex-wrap justify-center gap-4 mb-12 scroll-anim anim-up-fast">
-            <a href="mailto:drawdiny@gmail.com" className="c-btn-primary flex items-center gap-2">
-              <Mail className="w-5 h-5" />
-              Email Me
-            </a>
-            <a href="https://github.com/YanWirdiny" className="c-btn-secondary flex items-center gap-2">
-              <Github className="w-5 h-5" />
-              GitHub
-            </a>
-            <a href="https://www.linkedin.com/in/yan-wirdiny-moise/" className="c-btn-secondary flex items-center gap-2">
-              <Linkedin className="w-5 h-5" />
-              LinkedIn
-            </a>
+          <h2 className="contact-headline scroll-anim anim-up">
+            LET&apos;S <span className="cr-text">BUILD</span> TOGETHER
+          </h2>
+          <div className="contact-btns scroll-anim anim-up">
+            <a href="mailto:drawdiny@gmail.com" className="btn-primary">$ ./email_me</a>
+            <a href="https://github.com/YanWirdiny" target="_blank" rel="noopener noreferrer" className="btn-secondary">github</a>
+            <a href="https://www.linkedin.com/in/yan-wirdiny-moise/" target="_blank" rel="noopener noreferrer" className="btn-secondary">linkedin</a>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-6 c-footer">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="c-muted">© 2025 Yan Wirdiny Moise. All rights reserved.</p>
-          <p className="c-muted text-sm">Designed & Built with React</p>
+      <footer className="p-footer">
+        <div className="footer-inner">
+          <span>&#169; 2025 yan_wirdiny_moise // all_rights_reserved</span>
+          <span>built_with: react // hosted_on: railway</span>
         </div>
       </footer>
 
-      {/* ── CSS ── */}
       <style>{`
-        /* ── Palette ──────────────────────────────────────
-           #cdc392  gold/tan
-           #e8e5da  cream (main text)
-           #9eb7e5  light blue
-           #648de5  blue (primary accent)
-           #304c89  navy (dark accent)
-        ────────────────────────────────────────────────── */
-        :root {
-          --gold:       #cdc392;
-          --cream:      #e8e5da;
-          --light-blue: #9eb7e5;
-          --blue:       #648de5;
-          --navy:       #304c89;
+        /* ── Theme tokens ──────────────────────────────────────── */
+        [data-theme="dark"], .portfolio-root {
+          --cr:          #8B1A1A;
+          --cr-dk:       #5C0F0F;
+          --cr-glow:     #B22222;
+          --hero-bg:     #8B1A1A;
+          --hero-txt:    #F0EBE0;
+          --cursor-clr:  #F0EBE0;
+          --work-bg:     #0A0A0A;
+          --skills-bg:   #0A0A0A;
+          --about-bg:    #8B1A1A;
+          --contact-bg:  #0A0A0A;
+          --card-bg:     #141414;
+          --card-border: #2A2A2A;
+          --bar-bg:      #1F1F1F;
+          --txt-1:       #F0EBE0;
+          --txt-2:       rgba(240,235,224,0.5);
+          --label-clr:   #B22222;
+          --live-clr:    #5DFF8A;
+          --nav-bg:      rgba(10,10,10,0.95);
+          --nav-border:  #2A2A2A;
+          --nav-txt:     #F0EBE0;
+          --badge-bg:    rgba(240,235,224,0.07);
+          --badge-bdr:   rgba(240,235,224,0.18);
+          --stat-bdr:    #2A2A2A;
+          --footer-bg:   #0A0A0A;
+          --footer-bdr:  #2A2A2A;
+          --footer-txt:  rgba(240,235,224,0.4);
+          --grid-clr:    rgba(240,235,224,0.06);
         }
 
+        [data-theme="light"] {
+          --cr:          #8B1A1A;
+          --cr-dk:       #5C0F0F;
+          --cr-glow:     #A52020;
+          --hero-bg:     #F4EFE4;
+          --hero-txt:    #8B1A1A;
+          --cursor-clr:  #8B1A1A;
+          --work-bg:     #FAF8F3;
+          --skills-bg:   #EBE5D7;
+          --about-bg:    #F4EFE4;
+          --contact-bg:  #FAF8F3;
+          --card-bg:     #FAF8F3;
+          --card-border: #1A1A1A;
+          --bar-bg:      #E8E2D2;
+          --txt-1:       #1A1A1A;
+          --txt-2:       #4A4A4A;
+          --label-clr:   #8B1A1A;
+          --live-clr:    #1F9D3A;
+          --nav-bg:      rgba(250,248,243,0.97);
+          --nav-border:  #C9C2B1;
+          --nav-txt:     #1A1A1A;
+          --badge-bg:    rgba(139,26,26,0.06);
+          --badge-bdr:   rgba(139,26,26,0.18);
+          --stat-bdr:    #C9C2B1;
+          --footer-bg:   #EBE5D7;
+          --footer-bdr:  #C9C2B1;
+          --footer-txt:  #4A4A4A;
+          --grid-clr:    rgba(26,26,26,0.05);
+        }
+
+        /* ── Reset ──────────────────────────────────────────────── */
+        .portfolio-root *, .portfolio-root *::before, .portfolio-root *::after {
+          border-radius: 0 !important;
+          box-sizing: border-box;
+          margin: 0;
+          padding: 0;
+        }
+        .portfolio-root .lights span,
+        .portfolio-root .dot-live {
+          border-radius: 50% !important;
+        }
         * { scroll-behavior: smooth; }
 
-        /* Base — light cream background, navy text */
-        .c-bg   { background-color: var(--cream); color: var(--navy); }
-        .c-gold { color: var(--navy); }
-        .c-blue { color: var(--blue); }
-        .c-muted { color: var(--blue); opacity: 0.7; }
-        .c-icon-dark { color: var(--cream); }
-        .c-cursor { background-color: var(--navy); opacity: 0.4; }
-
-        /* Nav — navy bg, cream text */
-        .c-nav { background-color: rgba(48,76,137,0.95); border-bottom: 1px solid var(--blue); }
-        .c-nav-link { color: var(--cream); transition: color 0.2s; }
-        .c-nav-link:hover { color: var(--light-blue); }
-
-        /* Badge */
-        .c-badge { background-color: var(--light-blue); border: 1px solid var(--blue); color: var(--navy); }
-
-        /* Cards — white bg, navy border */
-        .c-card { background-color: #ffffff; border: 1px solid var(--light-blue); }
-        .c-tag  { background-color: var(--light-blue); color: var(--navy); }
-
-        /* Alternate section bg — gold/tan */
-        .c-section-alt { background-color: var(--gold); }
-
-        /* Footer */
-        .c-footer { border-top: 1px solid var(--light-blue); }
-
-        /* Scroll indicator */
-        .c-scroll-indicator { border: 2px solid var(--navy); }
-        .c-scroll-dot       { background-color: var(--navy); }
-
-        /* Buttons */
-        .c-btn-primary {
-          padding: 1rem 2rem;
-          background-color: var(--navy);
-          color: var(--cream);
-          border-radius: 9999px;
-          font-weight: 600;
-          transition: background-color 0.2s;
+        /* ── Root ───────────────────────────────────────────────── */
+        .portfolio-root {
+          font-family: 'Courier New', Courier, monospace;
+          background-color: var(--work-bg);
+          color: var(--txt-1);
+          overflow-x: hidden;
         }
-        .c-btn-primary:hover { background-color: var(--blue); }
 
-        .c-btn-secondary {
-          padding: 1rem 2rem;
-          background-color: transparent;
-          color: var(--navy);
-          border-radius: 9999px;
-          font-weight: 500;
-          border: 1px solid var(--navy);
-          transition: border-color 0.2s, color 0.2s, background-color 0.2s;
+        /* ── Shared util ─────────────────────────────────────────── */
+        .cr-text { color: var(--cr); }
+
+        /* ── Nav ─────────────────────────────────────────────────── */
+        .p-nav {
+          position: fixed;
+          top: 0;
+          width: 100%;
+          z-index: 40;
+          background: var(--nav-bg);
+          border-bottom: 1px solid var(--nav-border);
+          backdrop-filter: blur(12px);
         }
-        .c-btn-secondary:hover { background-color: var(--navy); color: var(--cream); }
+        .nav-inner {
+          max-width: 1280px;
+          margin: 0 auto;
+          padding: 18px 36px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 24px;
+        }
+        .nav-logo { display: flex; align-items: center; }
+        .nav-prompt { color: var(--cr); font-size: 10px; letter-spacing: 2px; }
+        .nav-name   { color: var(--nav-txt); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; }
+        .nav-links  { display: flex; gap: 28px; }
+        .nav-link {
+          color: var(--nav-txt);
+          font-family: 'Courier New', monospace;
+          font-size: 10px;
+          letter-spacing: 2px;
+          text-transform: uppercase;
+          text-decoration: none;
+          transition: color 0.2s;
+        }
+        .nav-link:hover { color: var(--cr); }
+        .theme-toggle {
+          background: transparent;
+          border: 1px solid var(--nav-border);
+          color: var(--nav-txt);
+          font-family: 'Courier New', monospace;
+          font-size: 9px;
+          letter-spacing: 1px;
+          padding: 5px 10px;
+          cursor: pointer;
+          transition: border-color 0.2s, color 0.2s;
+          flex-shrink: 0;
+        }
+        .theme-toggle:hover { border-color: var(--cr); color: var(--cr); }
 
-        /* ── Per-section scroll animations ────────────────
+        /* ── Hero ─────────────────────────────────────────────────── */
+        .hero-section {
+          background-color: var(--hero-bg);
+          min-height: 100vh;
+          display: flex;
+          align-items: center;
+          position: relative;
+          overflow: hidden;
+          padding: 72px 36px 64px;
+        }
+        .hero-inner {
+          max-width: 1280px;
+          margin: 0 auto;
+          width: 100%;
+          position: relative;
+          z-index: 1;
+          padding-top: 80px;
+        }
+        .hero-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          background: var(--badge-bg);
+          border: 1px solid var(--badge-bdr);
+          padding: 8px 14px;
+          margin-bottom: 24px;
+          box-shadow: 4px 4px 0 0 var(--cr-dk);
+        }
+        .dot-live {
+          width: 7px;
+          height: 7px;
+          background: var(--live-clr);
+          display: inline-block;
+          flex-shrink: 0;
+        }
+        .dot-sm { width: 5px; height: 5px; }
+        .badge-text {
+          font-size: 9px;
+          letter-spacing: 2px;
+          text-transform: uppercase;
+          color: var(--hero-txt);
+        }
+        .hero-eyebrow {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          margin-bottom: 16px;
+        }
+        .eyebrow-rule {
+          display: inline-block;
+          width: 40px;
+          height: 1px;
+          background: var(--hero-txt);
+          opacity: 0.35;
+        }
+        .eyebrow-text {
+          font-size: 9px;
+          letter-spacing: 4px;
+          text-transform: uppercase;
+          color: var(--hero-txt);
+          opacity: 0.6;
+        }
+        .hero-headline {
+          font-family: Impact, 'Arial Narrow', Arial, sans-serif;
+          font-size: clamp(64px, 10vw, 108px);
+          font-weight: 900;
+          letter-spacing: 1px;
+          text-transform: uppercase;
+          color: var(--hero-txt);
+          line-height: 0.95;
+          margin-bottom: 40px;
+        }
+        .typed-line { display: block; }
+        .typed-cursor {
+          display: inline-block;
+          color: var(--cursor-clr);
+          animation: blink 0.7s step-end infinite;
+        }
+        .manifesto-wrap {
+          max-width: 720px;
+          margin-bottom: 32px;
+        }
+        .manifesto-wrap .terminal-card { box-shadow: 8px 8px 0 0 var(--cr-dk); }
+        [data-theme="light"] .manifesto-wrap .terminal-card { box-shadow: 8px 8px 0 0 var(--cr); }
+        .manifesto-wrap .terminal-body { padding: 18px 22px; }
+        .manifesto-text {
+          font-size: 11px;
+          letter-spacing: 0.3px;
+          color: var(--txt-1);
+        }
+        .version-tag {
+          font-size: 9px;
+          letter-spacing: 3px;
+          text-transform: uppercase;
+          color: var(--hero-txt);
+          opacity: 0.35;
+        }
 
-           Each section uses a different animation class.
-           The IntersectionObserver adds 'is-visible' when
-           the element enters the viewport.
-        ────────────────────────────────────────────────── */
+        /* ── Grid overlay ──────────────────────────────────────── */
+        .grid-overlay {
+          position: absolute;
+          inset: 0;
+          pointer-events: none;
+          z-index: 0;
+          background-image:
+            linear-gradient(var(--grid-clr) 1px, transparent 1px),
+            linear-gradient(90deg, var(--grid-clr) 1px, transparent 1px);
+          background-size: 36px 36px;
+        }
 
-        /* Hero — slide up */
+        /* ── Terminal card ──────────────────────────────────────── */
+        .terminal-card {
+          border: 1px solid var(--card-border);
+          background: var(--card-bg);
+          box-shadow: 10px 10px 0 0 var(--cr);
+          width: 100%;
+        }
+        .terminal-bar {
+          background: var(--bar-bg);
+          padding: 10px 14px;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          border-bottom: 1px solid var(--card-border);
+        }
+        .lights { display: flex; gap: 7px; }
+        .lights span { width: 11px; height: 11px; display: inline-block; }
+        .l-r { background: #FF5F57; }
+        .l-y { background: #FEBC2E; }
+        .l-g { background: #28C840; }
+        .terminal-title {
+          font-size: 10px;
+          color: var(--txt-2);
+          letter-spacing: 1.5px;
+          flex: 1;
+          text-align: center;
+          margin-right: 42px;
+        }
+        .terminal-body { padding: 28px 32px; }
+
+        /* ── Section commons ────────────────────────────────────── */
+        .section-inner {
+          max-width: 1280px;
+          margin: 0 auto;
+          padding: 80px 36px;
+        }
+        .section-label {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+          margin-bottom: 48px;
+        }
+        .label-text {
+          font-size: 9px;
+          letter-spacing: 4px;
+          text-transform: uppercase;
+          color: var(--label-clr);
+          white-space: nowrap;
+        }
+        .label-rule {
+          flex: 1;
+          height: 1px;
+          background: var(--card-border);
+        }
+
+        /* ── Work section ───────────────────────────────────────── */
+        .work-section { background-color: var(--work-bg); }
+        .projects-list { display: flex; flex-direction: column; gap: 48px; }
+        .proj-anchor { display: block; text-decoration: none; }
+        .proj-card { transition: transform 0.2s; }
+        .proj-card .terminal-card { transition: box-shadow 0.2s; }
+        .proj-card:hover { transform: translate(-2px, -2px); }
+        .proj-card:hover .terminal-card { box-shadow: 14px 14px 0 0 var(--cr); }
+        .proj-meta {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-bottom: 16px;
+        }
+        .proj-id { font-size: 9px; letter-spacing: 2px; color: var(--cr); }
+        .proj-status {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          font-size: 9px;
+          letter-spacing: 1px;
+          color: var(--live-clr);
+        }
+        .proj-title {
+          font-family: Impact, 'Arial Narrow', Arial, sans-serif;
+          font-size: 42px;
+          font-weight: 900;
+          letter-spacing: 1px;
+          text-transform: uppercase;
+          color: var(--txt-1);
+          margin-bottom: 12px;
+        }
+        .proj-desc {
+          font-size: 11px;
+          letter-spacing: 0.3px;
+          color: var(--txt-2);
+          margin-bottom: 24px;
+          max-width: 540px;
+          line-height: 1.7;
+        }
+        .proj-footer {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          flex-wrap: wrap;
+          gap: 16px;
+        }
+        .proj-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+        .proj-tag {
+          font-size: 9px;
+          letter-spacing: 1px;
+          text-transform: uppercase;
+          padding: 4px 8px;
+          border: 1px solid var(--cr);
+          color: var(--cr);
+        }
+        .proj-view { font-size: 10px; letter-spacing: 1.5px; color: var(--txt-1); }
+
+        /* ── Skills section ─────────────────────────────────────── */
+        .skills-section { background-color: var(--skills-bg); }
+        .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 36px; }
+        .skill-prompt { font-size: 10px; color: var(--txt-2); margin-bottom: 12px; }
+        .skill-title {
+          font-family: Impact, 'Arial Narrow', Arial, sans-serif;
+          font-size: 28px;
+          font-weight: 900;
+          letter-spacing: 1px;
+          text-transform: uppercase;
+          color: var(--txt-1);
+          margin-bottom: 16px;
+        }
+        .skill-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+        .skill-item {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          font-size: 11px;
+          color: var(--txt-2);
+        }
+
+        /* ── About section ──────────────────────────────────────── */
+        .about-section {
+          background-color: var(--about-bg);
+          position: relative;
+          overflow: hidden;
+        }
+        .about-section .section-inner { position: relative; z-index: 1; }
+        .about-section .terminal-card { box-shadow: 10px 10px 0 0 var(--cr-dk); }
+        [data-theme="light"] .about-section .terminal-card { box-shadow: 10px 10px 0 0 var(--cr); }
+        .about-stack { display: flex; flex-direction: column; gap: 36px; }
+        .about-prompt { font-size: 10px; color: var(--txt-2); margin-bottom: 20px; }
+        .about-text {
+          font-family: Georgia, 'Times New Roman', serif;
+          font-size: 20px;
+          line-height: 1.65;
+          color: var(--txt-1);
+          max-width: 600px;
+        }
+        .stats-block {
+          display: flex;
+          align-items: stretch;
+          border: 1px solid var(--stat-bdr);
+        }
+        .stat-cell {
+          flex: 1;
+          padding: 28px 32px;
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+        }
+        .stat-divider { width: 1px; background: var(--stat-bdr); }
+        .stat-number {
+          font-family: Impact, 'Arial Narrow', Arial, sans-serif;
+          font-size: 56px;
+          font-weight: 900;
+          letter-spacing: -1px;
+          color: var(--txt-1);
+          line-height: 1;
+        }
+        .stat-label { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--txt-2); }
+
+        /* ── Contact section ────────────────────────────────────── */
+        .contact-section { background-color: var(--contact-bg); }
+        .contact-headline {
+          font-family: Impact, 'Arial Narrow', Arial, sans-serif;
+          font-size: clamp(42px, 8vw, 76px);
+          font-weight: 900;
+          letter-spacing: 1px;
+          text-transform: uppercase;
+          color: var(--txt-1);
+          margin-bottom: 40px;
+          line-height: 1;
+        }
+        .contact-btns { display: flex; flex-wrap: wrap; gap: 20px; }
+        .btn-primary {
+          padding: 14px 28px;
+          background: var(--cr);
+          color: #FAF8F3;
+          font-family: 'Courier New', monospace;
+          font-size: 11px;
+          letter-spacing: 1.5px;
+          text-decoration: none;
+          box-shadow: 6px 6px 0 0 var(--cr-dk);
+          transition: transform 0.2s, box-shadow 0.2s;
+          display: inline-block;
+        }
+        .btn-primary:hover { transform: translate(-2px, -2px); box-shadow: 8px 8px 0 0 var(--cr-dk); }
+        .btn-secondary {
+          padding: 14px 28px;
+          background: transparent;
+          color: var(--txt-1);
+          font-family: 'Courier New', monospace;
+          font-size: 11px;
+          letter-spacing: 1.5px;
+          text-decoration: none;
+          border: 1px solid var(--card-border);
+          transition: border-color 0.2s, color 0.2s;
+          display: inline-block;
+        }
+        .btn-secondary:hover { border-color: var(--cr); color: var(--cr); }
+
+        /* ── Footer ──────────────────────────────────────────────── */
+        .p-footer {
+          background: var(--footer-bg);
+          border-top: 1px solid var(--footer-bdr);
+          padding: 18px 36px;
+        }
+        .footer-inner {
+          max-width: 1280px;
+          margin: 0 auto;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          flex-wrap: wrap;
+          gap: 8px;
+          font-size: 9px;
+          letter-spacing: 1px;
+          color: var(--footer-txt);
+        }
+
+        /* ── Animations ──────────────────────────────────────────── */
         .anim-up {
           opacity: 0;
           transform: translateY(40px);
@@ -383,55 +756,25 @@ export default function Portfolio() {
         }
         .anim-up.is-visible { opacity: 1; transform: translateY(0); }
 
-        /* Projects — slide from left */
-        .anim-left {
-          opacity: 0;
-          transform: translateX(-50px);
-          transition: opacity 0.8s ease, transform 0.8s ease;
-        }
-        .anim-left.is-visible { opacity: 1; transform: translateX(0); }
-
-        /* Skills — slide from right */
-        .anim-right {
-          opacity: 0;
-          transform: translateX(50px);
-          transition: opacity 0.8s ease, transform 0.8s ease;
-        }
-        .anim-right.is-visible { opacity: 1; transform: translateX(0); }
-
-        /* About — zoom in */
-        .anim-zoom {
-          opacity: 0;
-          transform: scale(0.92);
-          transition: opacity 0.7s ease, transform 0.7s ease;
-        }
-        .anim-zoom.is-visible { opacity: 1; transform: scale(1); }
-
-        /* Contact — slide up, faster */
-        .anim-up-fast {
-          opacity: 0;
-          transform: translateY(30px);
-          transition: opacity 0.5s ease, transform 0.5s ease;
-        }
-        .anim-up-fast.is-visible { opacity: 1; transform: translateY(0); }
-
-        /* Typed cursor blink */
-        .typed-cursor {
-          display: inline-block;
-          color: #304c89;
-          animation: blink 0.7s step-end infinite;
-        }
         @keyframes blink {
           0%, 100% { opacity: 1; }
           50%       { opacity: 0; }
         }
 
-        /* Bounce for scroll indicator */
-        @keyframes bounce {
-          0%, 100% { transform: translateY(0); }
-          50%       { transform: translateY(-10px); }
+        /* ── Responsive ──────────────────────────────────────────── */
+        @media (max-width: 768px) {
+          .nav-inner   { padding: 18px 20px; }
+          .nav-links   { display: none; }
+          .hero-section { padding: 72px 20px 64px; }
+          .hero-inner  { padding-top: 72px; }
+          .section-inner { padding: 60px 20px; }
+          .skills-grid { grid-template-columns: 1fr; }
+          .stats-block { flex-direction: column; }
+          .stat-divider { width: auto; height: 1px; }
+          .contact-btns { flex-direction: column; }
+          .footer-inner { flex-direction: column; text-align: center; }
+          .proj-footer  { flex-direction: column; align-items: flex-start; }
         }
-        .animate-bounce { animation: bounce 2s infinite; }
       `}</style>
     </div>
   );
